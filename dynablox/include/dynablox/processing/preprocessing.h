@@ -4,9 +4,9 @@
 #include <string>
 
 #include <pcl/point_cloud.h>
-#include <tf/transform_datatypes.h>
+// #include <tf/transform_datatypes.h>
 
-#include "dynablox/3rd_party/config_utilities.hpp"
+// #include "dynablox/3rd_party/config_utilities.hpp"
 #include "dynablox/common/types.h"
 
 namespace dynablox {
@@ -14,21 +14,21 @@ namespace dynablox {
 class Preprocessing {
  public:
   // Config.
-  struct Config : public config_utilities::Config<Config> {
-    // Maximum ray length to integrate [m].
-    float max_range = 20.f;
+  // struct Config : public config_utilities::Config<Config> {
+  //   // Maximum ray length to integrate [m].
+  //   float max_range = 20.f;
 
-    // Minimum range for all points [m].
-    float min_range = 0.5;
+  //   // Minimum range for all points [m].
+  //   float min_range = 0.5;
 
-    Config() { setConfigName("Preprocessing"); }
+  //   Config() { setConfigName("Preprocessing"); }
 
-   protected:
-    void setupParamsAndPrinting() override;
-    void checkParams() const override;
-  };
+  //  protected:
+  //   void setupParamsAndPrinting() override;
+  //   void checkParams() const override;
+  // };
 
-  explicit Preprocessing(const Config& config);
+  // explicit Preprocessing(const Config& config);
 
   /**
    * @brief Transform the pointcloud to world frame and mark points valid for
@@ -40,13 +40,13 @@ class Preprocessing {
    * @param cloud Cloud to store the processed input point cloud.
    * @return Success.
    */
-  bool processPointcloud(const sensor_msgs::PointCloud2::Ptr& msg,
-                         const tf::StampedTransform T_M_S, Cloud& cloud,
-                         CloudInfo& cloud_info) const;
+  // bool processPointcloud(const sensor_msgs::PointCloud2::Ptr& msg,
+  //                        const tf::StampedTransform T_M_S, Cloud& cloud,
+  //                        CloudInfo& cloud_info) const;
 
  private:
   // Config.
-  const Config config_;
+  // const Config config_;
 };
 
 }  // namespace dynablox

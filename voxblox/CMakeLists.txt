@@ -1,0 +1,63 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(voxblox)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(Eigen3 REQUIRED)
+find_package(OpenMP REQUIRED)
+find_package(Protobuf REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common io)
+find_package(Threads REQUIRED)
+
+set(CMAKE_MACOSX_RPATH 0)
+add_definitions(-std=c++14 -Wall -Wextra)
+
+# Compile protobuf files
+set(PROTO_DEFNS proto/voxblox/Block.proto
+                proto/voxblox/Layer.proto)
+set(BASE_PATH "proto")
+set(PROTOBUF_COMPILE_PYTHON true)
+
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_DEFNS})
+add_library(${PROJECT_NAME}_proto ${PROTO_SRCS})
+target_link_libraries(${PROJECT_NAME}_proto ${PROTOBUF_LIBRARIES})
+
+include_directories(${CMAKE_SOURCE_DIR}/build)
+
+# Add voxblox library
+set(${PROJECT_NAME}_SRCS
+  src/alignment/icp.cc
+  src/core/block.cc
+  src/core/esdf_map.cc
+  src/core/tsdf_map.cc
+  src/integrator/esdf_integrator.cc
+  src/integrator/esdf_occ_integrator.cc
+  src/integrator/integrator_utils.cc
+  src/integrator/intensity_integrator.cc
+  src/integrator/tsdf_integrator.cc
+  src/io/mesh_ply.cc
+  src/io/sdf_ply.cc
+  src/mesh/marching_cubes.cc
+  src/simulation/objects.cc
+  src/simulation/simulation_world.cc
+  src/utils/camera_model.cc
+  src/utils/evaluation_utils.cc
+  src/utils/layer_utils.cc
+  src/utils/neighbor_tools.cc
+  src/utils/protobuf_utils.cc
+  src/utils/timing.cc
+  src/utils/voxel_utils.cc
+)
+
+add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC
+  include
+  ${Boost_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
+)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} ${PROTOBUF_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_proto)

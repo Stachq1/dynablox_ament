@@ -1,20 +1,25 @@
-#ifndef DYNABLOX_COMMON_TYPES_H_
-#define DYNABLOX_COMMON_TYPES_H_
+/**
+ * Copyright (C) 2023-now, RPL, KTH Royal Institute of Technology
+ * MIT License
+ * @author Kin ZHANG (https://kin-zhang.github.io/)
+ * @date: 2023-05-02 19:39
+ * @details: No ROS version, speed up the process, check our benchmark in dufomap
+ */
+#pragma once
 
-#include <utility>
+#include <memory>
 #include <vector>
-
+#include <pcl/io/pcd_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+
 #include <voxblox/core/block.h>
 #include <voxblox/core/common.h>
 #include <voxblox/core/layer.h>
 #include <voxblox/core/voxel.h>
+#include "common/utils.h"
 
 namespace dynablox {
-
-using Point = pcl::PointXYZ;
-using Cloud = pcl::PointCloud<Point>;
 
 using VoxelIndex = voxblox::VoxelIndex;
 using BlockIndex = voxblox::BlockIndex;
@@ -47,7 +52,7 @@ struct PointInfo {
 struct CloudInfo {
   bool has_labels = false;
   std::uint64_t timestamp;
-  Point sensor_position;
+  PointType sensor_position;
   std::vector<PointInfo> points;
 };
 
@@ -59,8 +64,8 @@ using BlockToPointMap = voxblox::AnyIndexHashMapType<VoxelToPointMap>::type;
 
 // Simple axis-aligned bounding box.
 struct BoundingBox {
-  Point min_corner;
-  Point max_corner;
+  PointType min_corner;
+  PointType max_corner;
 
   bool intersects(const BoundingBox& other, const float margin = 0.f) const {
     if (min_corner.x - margin > other.max_corner.x) {
@@ -96,11 +101,9 @@ struct Cluster {
   bool valid = false;         // Whether the cluster has met all cluster checks.
   BoundingBox aabb;           // Axis-aligned bounding box of the cluster.
   std::vector<int> points;    // Indices of points in cloud.
-  std::vector<Point> voxels;  // Center points of voxels in this cluster.
+  std::vector<PointType> voxels;  // Center points of voxels in this cluster.
 };
 
 using Clusters = std::vector<Cluster>;
 
 }  // namespace dynablox
-
-#endif  // DYNABLOX_COMMON_TYPES_H_

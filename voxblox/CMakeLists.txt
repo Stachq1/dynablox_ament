@@ -11,6 +11,8 @@ find_package(PCL REQUIRED COMPONENTS common io)
 find_package(Threads REQUIRED)
 
 set(CMAKE_MACOSX_RPATH 0)
+# recompile with -fPIC
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_definitions(-std=c++14 -Wall -Wextra)
 
 # Compile protobuf files

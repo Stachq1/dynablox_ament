@@ -25,8 +25,13 @@ set(FUN_LIB ${PCL_LIBRARIES} Eigen3::Eigen yaml-cpp)
 include_directories(${CMAKE_SOURCE_DIR}/build)
 include_directories(${CMAKE_SOURCE_DIR}/voxblox/include)
 include_directories(include)
-add_library(dufo_lib SHARED src/dynablox.cpp)
-target_link_libraries(dufo_lib ${LOG_LIB} yaml-cpp ${FUN_LIB})
+
+add_library(dufo_lib SHARED 
+            src/dynablox.cpp 
+            src/clustering.cpp 
+            src/TsdfMapper.cpp)
+
+target_link_libraries(dufo_lib ${LOG_LIB} yaml-cpp ${FUN_LIB} voxblox)
 
 add_executable(dynablox_run dynablox_pcd.cpp)
 target_link_libraries(dynablox_run dufo_lib)

@@ -20,7 +20,10 @@
 
 #include "common/utils.h"
 #include "common/timing.hpp"
+#include "common/TsdfMapper.h"
+
 #include "dynablox/types.h"
+#include "dynablox/clustering.h"
 
 namespace dynablox {
 
@@ -37,14 +40,23 @@ public:
 private:
     common::Config config_;
     YAML::Node yconfig;
-    std::shared_ptr<TsdfLayer> tsdf_layer_;
+    
     size_t frame_counter_ = 0;
+
+    std::shared_ptr<voxblox::TsdfMapper> tsdf_mapper_;
+    std::shared_ptr<TsdfLayer> tsdf_layer_;
+    
+    std::shared_ptr<Clustering> clustering_;
+    // std::shared_ptr<EverFreeIntegrator> ever_free_integrator_;
+
 
     bool processPointcloud(pcl::PointCloud<PointType>::Ptr const& single_pc,
                            pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info);
+    void Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& cloud_info);
     void setUpPointMap(const pcl::PointCloud<PointType>& cloud, BlockToPointMap& point_map,
                     std::vector<voxblox::VoxelKey>& occupied_ever_free_voxel_indices,
                     CloudInfo& cloud_info) const;
+    void trackClusterIDs(const Cloud& cloud, Clusters& clusters);
 
     voxblox::HierarchicalIndexIntMap buildBlockToPointsMap(
             const pcl::PointCloud<PointType>& cloud) const;
@@ -54,5 +66,12 @@ private:
         VoxelToPointMap& voxel_map,
         std::vector<voxblox::VoxelKey>& occupied_ever_free_voxel_indices,
         CloudInfo& cloud_info) const;
+
+    
+    // Tracking data w.r.t. previous observation.
+    std::vector<voxblox::Point> previous_centroids_;
+    std::vector<int> previous_ids_;
+    std::vector<int> previous_track_lengths_;
+
 };
 }  // namespace octomap

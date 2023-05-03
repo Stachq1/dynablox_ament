@@ -21,6 +21,8 @@
 
 namespace dynablox {
 
+using Point = PointType;
+using Cloud = pcl::PointCloud<Point>;
 using VoxelIndex = voxblox::VoxelIndex;
 using BlockIndex = voxblox::BlockIndex;
 using TsdfVoxel = voxblox::TsdfVoxel;

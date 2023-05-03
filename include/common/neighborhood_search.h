@@ -5,7 +5,7 @@
 
 #include <voxblox/utils/neighbor_tools.h>
 
-#include "dynablox/common/types.h"
+#include "dynablox/types.h"
 
 namespace dynablox {
 

@@ -10,26 +10,26 @@
  */
 #include <future>
 #include <mutex>
+#include <pcl/common/transforms.h>
 
 #include "dynablox/dynablox.h"
 #include "dynablox/index_getter.h"
-
 
 namespace dynablox {
     MapUpdater::MapUpdater(const std::string &config_file_path ){
         yconfig = YAML::LoadFile(config_file_path);
         MapUpdater::setConfig();
         
-        tsdf_mapper_ = std::make_shared<voxblox::TsdfMapper>(config_);
-        // FIXME: There are some bugs here, TODO Check 
-        // tsdf_layer_.reset(tsdf_mapper_->getTsdfMapPtr()->getTsdfLayerPtr());
-        // LOG(INFO) << "have " <<  tsdf_layer_->getNumberOfAllocatedBlocks() << " blocks.";
-        // tsdf_layer_.reset();
-        tsdf_layer_.reset(new voxblox::Layer<voxblox::TsdfVoxel>(0.2, 16));
+        tsdf_mapper_ = std::make_shared<voxblox::TsdfMapper>(config_.voxblox_integrator_);
+        Dynamic_Cloud_.reset(new pcl::PointCloud<PointType>);
+        // I don't know why the origin one can directly use raw ptr without any problem
+        // I have to use the weak ptr
+        static std::weak_ptr<TsdfLayer> weak_ptr;
+        tsdf_layer_ = std::shared_ptr<TsdfLayer>(tsdf_mapper_->getTsdfMapPtr()->getTsdfLayerPtr(), [](TsdfLayer*){});
 
-        // Clustering.
+        // function
         clustering_ = std::make_shared<Clustering>(config_, tsdf_layer_);
-        
+        ever_free_integrator_ = std::make_shared<EverFreeIntegrator>(config_.ever_free_integrator_, tsdf_layer_);
     }
     
     void MapUpdater::setConfig(){
@@ -37,13 +37,24 @@ namespace dynablox {
     }
 
     void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc){
-
-        pcl::PointCloud<PointType> cloud;
+        Cloud cloud;
         CloudInfo cloud_info;
+        
+        // read pose in VIEWPOINT Field in pcd
+        cloud_info.sensor_position.x = single_pc->sensor_origin_[0];
+        cloud_info.sensor_position.y = single_pc->sensor_origin_[1];
+        cloud_info.sensor_position.z = single_pc->sensor_origin_[2];
+        // set T_World_Sensor based on sensor pose
+        Eigen::Matrix4f T_Sensor_World = Eigen::Matrix4f::Identity();
+        T_Sensor_World.block<3, 3>(0, 0) = single_pc->sensor_orientation_.toRotationMatrix();
+        T_Sensor_World.block<3, 1>(0, 3) = single_pc->sensor_origin_.head<3>();
+        voxblox::Transformation T_S_W(T_Sensor_World.cast<float>());
+        // transform pointcloud to sensor frame since voxblox inside will transform
+        pcl::transformPointCloud(*single_pc, cloud, T_Sensor_World.inverse());
 
         frame_counter_++;
         timing[1].start("Process Pointcloud");
-        processPointcloud(single_pc, cloud, cloud_info);
+        processPointcloud(cloud, cloud_info);
         timing[1].stop();
 
         timing[2].start("Index Setup");
@@ -62,15 +73,29 @@ namespace dynablox {
         Tracking(cloud, clusters, cloud_info);
         timing[4].stop();
 
-        // timing[5].start("Update EverFree");
-        // // TODO
-        // timing[5].stop();
+        timing[5].start("Update EverFree");
+        ever_free_integrator_->updateEverFreeVoxels(frame_counter_, timing);
+        timing[5].stop();
 
-        // timing[6].start("Integrate TSDF");
-        // // integrateTsdfLayer(cloud, cloud_info);
-        // timing[6].stop();
+        timing[6].start("Integrate TSDF");
+        tsdf_mapper_->processPointCloudAndInsert(cloud, T_S_W);
+        timing[6].stop();
+
+        int i = -1;
+        pcl::transformPointCloud(cloud, cloud, T_Sensor_World);
+        for(const auto&pt: cloud.points){
+            ++i;
+            if(cloud_info.points[i].ever_free_level_dynamic)
+                Dynamic_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
+            // LOG_EVERY_N(INFO, 1000) << "px: " << pt.x << " py: " << pt.y << " pz: " << pt.z;
+        }
     }
 
+    void MapUpdater::saveMap(std::string const& folder_path){
+        LOG(INFO) << "Saving map to " << folder_path << " Pointcloud size: " << Dynamic_Cloud_->points.size() << " points.";
+        if(Dynamic_Cloud_->points.size() > 0)
+            pcl::io::savePCDFileBinary(folder_path + "/dynablox_output.pcd", *Dynamic_Cloud_);
+    }
 
     void MapUpdater::Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& cloud_info){
         timing[3][1].start("Cluster IDs");
@@ -179,22 +204,11 @@ namespace dynablox {
             previous_track_lengths_.push_back(cluster.track_length);
         }
     }
-    bool MapUpdater::processPointcloud(pcl::PointCloud<PointType>::Ptr const& single_pc,
-                           pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info){
-        // read pose in VIEWPOINT Field in pcd
-        cloud_info.sensor_position.x = single_pc->sensor_origin_[0];
-        cloud_info.sensor_position.y = single_pc->sensor_origin_[1];
-        cloud_info.sensor_position.z = single_pc->sensor_origin_[2];
-        
+    bool MapUpdater::processPointcloud(pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info){
         cloud_info.points = std::vector<PointInfo>(cloud.size());
         size_t i = 0;
-        for (const auto& point : cloud) {
-            float px = point.x - cloud_info.sensor_position.x;
-            float py = point.y - cloud_info.sensor_position.y;
-            float pz = point.z - cloud_info.sensor_position.z;
-
-            const float norm =
-                std::sqrt(px * px + py * py + pz * pz);
+        for (const auto& pt : cloud) {
+            const float norm = std::sqrt(pt.x * pt.x + pt.y * pt.y + pt.z * pt.z);
             PointInfo& info = cloud_info.points.at(i);
             info.distance_to_sensor = norm;
             i++;

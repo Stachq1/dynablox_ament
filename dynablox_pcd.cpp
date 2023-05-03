@@ -61,17 +61,18 @@ int main(int argc, char **argv) {
     /* #endregion */
 
     dynablox::MapUpdater map_updater(config_file);
-    map_updater.timing.start("Total");
+    // map_updater.timing.start("Total");
     for (const auto & filename : filenames) {
-        // if(cnt>1 && !map_updater.getCfg().verbose_){
-        //     std::ostringstream log_msg;
-        //     log_msg << "(" << cnt << "/" << run_max << ") Processing: " << filename << " Time Cost: " 
-        //         << map_updater.timing.lastSeconds(" One Scan Cost  ") << "s";
-        //     std::string spaces(10, ' ');
-        //     log_msg << spaces;
-        //     // std::cout <<log_msg.str()<<std::endl;
-        //     std::cout << "\r" <<log_msg.str() << std::flush;
-        // }
+        map_updater.timing[0].start("One Scan Cost");
+        if(cnt>1 && !map_updater.getCfg().verbose_){
+            std::ostringstream log_msg;
+            log_msg << "(" << cnt << "/" << run_max << ") Processing: " << filename << " Time Cost: " 
+                << map_updater.timing[0].lastSeconds() << "s";
+            std::string spaces(10, ' ');
+            log_msg << spaces;
+            // std::cout <<log_msg.str()<<std::endl;
+            std::cout << "\r" <<log_msg.str() << std::flush;
+        }
 
         if (filename.substr(filename.size() - 4) != ".pcd")
             continue;
@@ -82,10 +83,11 @@ int main(int argc, char **argv) {
         cnt++;
         if(cnt>run_max)
             break;
+        map_updater.timing[0].stop();
     }
+    map_updater.saveMap(pcd_parent);
     map_updater.timing.stop();
-    map_updater.timing.print(true/*color*/, true/*bold*/);
-
+    map_updater.timing.print("Dynablox " /*title*/, true/*color*/, true/*bold*/ );
     
     return 0;
 }

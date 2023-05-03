@@ -344,17 +344,18 @@ class Timing : public Timer
 	static constexpr char const* boldCyanColor() { return "\033[1m\033[36m"; }
 	static constexpr char const* boldWhiteColor() { return "\033[1m\033[37m"; }
 
-	void print(bool random_colors = false, bool bold = false,
+	void print(std::string title = "", bool random_colors = false, bool bold = false,
 	           std::size_t group_colors_level = std::numeric_limits<std::size_t>::max(),
 	           int         precision          = 4) const
 	{
-		printSeconds(random_colors, bold, group_colors_level, precision);
+		printSeconds(title, random_colors, bold, group_colors_level, precision);
 	}
 
-	void printSeconds(
+	void printSeconds(std::string title = "",
 	    bool random_colors = false, bool bold = false,
 	    std::size_t group_colors_level = std::numeric_limits<std::size_t>::max(),
-	    int         precision          = 4) const
+	    int         precision          = 4
+		) const
 	{
 		static constexpr std::array const RC{redColor(),  greenColor(),   yellowColor(),
 		                                     blueColor(), magentaColor(), cyanColor(),
@@ -379,7 +380,7 @@ class Timing : public Timer
 			right_pad[i] = std::ceil((width[i] - static_cast<int>(label[i].length())) / 2.0);
 		}
 
-		printf("Timings in seconds (s)\n");
+		printf("%sTimings in seconds (s)\n",title.c_str());
 		printf("%*s%s%*s", left_pad[0], "", label[0].c_str(), right_pad[0], "");
 		for (std::size_t i{1}; label.size() != i; ++i) {
 			printf("\t%*s%s%*s", left_pad[i], "", label[i].c_str(), right_pad[i], "");

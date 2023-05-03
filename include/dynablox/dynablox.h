@@ -36,7 +36,9 @@ public:
     
     void setConfig();
     void run(pcl::PointCloud<PointType>::Ptr const& single_pc);
-
+    void saveMap(std::string const& folder_path);
+    const common::Config getCfg() { return config_; }
+    
 private:
     common::Config config_;
     YAML::Node yconfig;
@@ -47,11 +49,10 @@ private:
     std::shared_ptr<TsdfLayer> tsdf_layer_;
     
     std::shared_ptr<Clustering> clustering_;
-    // std::shared_ptr<EverFreeIntegrator> ever_free_integrator_;
+    std::shared_ptr<EverFreeIntegrator> ever_free_integrator_;
 
 
-    bool processPointcloud(pcl::PointCloud<PointType>::Ptr const& single_pc,
-                           pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info);
+    bool processPointcloud(pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info);
     void Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& cloud_info);
     void setUpPointMap(const pcl::PointCloud<PointType>& cloud, BlockToPointMap& point_map,
                     std::vector<voxblox::VoxelKey>& occupied_ever_free_voxel_indices,
@@ -72,6 +73,6 @@ private:
     std::vector<voxblox::Point> previous_centroids_;
     std::vector<int> previous_ids_;
     std::vector<int> previous_track_lengths_;
-
+    pcl::PointCloud<PointType>::Ptr Dynamic_Cloud_;
 };
 }  // namespace octomap

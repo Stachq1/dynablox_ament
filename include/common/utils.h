@@ -31,8 +31,16 @@ typedef pcl::PointXYZ PointType;
 
 namespace common {
 struct Config {
+  int num_threads = 16;
+
   float m_res = 0.1;  // resolution of the map
-  int num_threads = 4;
+  double max_range_m = 80;
+  double min_range_m = 0.1;
+
+  // Common =============>
+  // Connectivity used when clustering voxels. (6, 18, 26)
+  int neighbor_connectivity = 6;
+  bool verbose_ = false;
 
   // Cluster =============>
   // Filter out clusters with too few or many points.
@@ -43,8 +51,6 @@ struct Config {
   float max_extent = 2.5f;
   // Grow ever free detections by 1 (false) or 2 (true) voxels.
   bool grow_clusters_twice = true;
-  // Connectivity used when clustering voxels. (6, 18, 26)
-  int neighbor_connectivity = 6;
   // If true check separation per point, if false per voxel.
   bool check_cluster_separation_exact = false;
   // merge clusters whose points are closer than the minimum separation [m].
@@ -56,7 +62,34 @@ struct Config {
   // Maximum distance a cluster may have moved to be considered a track [m].
   float max_tracking_distance = 1.f;
 
-  bool verbose_ = true;
+  struct EverFreeCfg{
+    int counter_to_reset = 50;
+    int temporal_buffer = 2;
+    int burn_in_period = 5;
+    float tsdf_occupancy_threshold = 0.3;
+    int neighbor_connectivity = 6; // TODO figure out this param
+    int num_threads = 16;
+  };
+  EverFreeCfg ever_free_integrator_;
+
+  struct VoxbloxCfg{
+    float tsdf_voxel_size_ = 0.2;
+    int tsdf_voxels_per_side_ = 16;
+    
+    float truncation_distance_ = 0.4;
+    int max_weight_ = 1000;
+
+    std::string tsdf_methods = "projective";
+    int sensor_horizontal_resolution_ = 2048;
+    int sensor_vertical_resolution_ = 64;
+    float sensor_vertical_field_of_view_degrees_ = 0.66;
+    bool use_const_weight_ = true;
+
+    double max_range_m = 80;
+    double min_range_m = 0.1;
+    bool verbose_ = false;
+  };
+  VoxbloxCfg voxblox_integrator_;
 
 };
 

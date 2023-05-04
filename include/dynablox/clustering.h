@@ -16,7 +16,7 @@
 
 #include "common/neighborhood_search.h"
 #include "common/utils.h"
-
+#include "common/timing.hpp"
 namespace dynablox {
 class Clustering {
  private:
@@ -42,7 +42,7 @@ class Clustering {
 
   using ClusterIndices = std::vector<voxblox::VoxelKey>;
   Clusters performClustering(const BlockToPointMap& point_map, const ClusterIndices& occupied_ever_free_voxel_indices,
-                             const int frame_counter, const Cloud& cloud, CloudInfo& cloud_info) const;
+                             const int frame_counter, const Cloud& cloud, CloudInfo& cloud_info, ufo::Timing& timing_) const;
 
   /**
    * @brief Use the voxel level clustering to assign all points to clusters.

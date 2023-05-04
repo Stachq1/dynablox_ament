@@ -36,14 +36,23 @@ TsdfMapper::TsdfMapper(common::Config::VoxbloxCfg& config) : config_(config) {
   setColor();
 }
 
-void TsdfMapper::processPointCloudAndInsert(dynablox::Cloud& cloud, voxblox::Transformation& T_G_C) {
+void TsdfMapper::processPointCloudAndInsert(dynablox::Cloud& cloud, voxblox::Transformation& T_G_C, ufo::Timing& timing_) {
   // T_G_C can be refined
   Pointcloud points_C;
   Colors colors;
+  timing_[6][0].start("Convert PointCloud");
   convertPointcloud(cloud, color_map_, &points_C, &colors);
+  timing_[6][0].stop();
+
+  timing_[6][1].start("Integrate PointCloud");
   tsdf_integrator_->integratePointCloud(T_G_C, points_C, colors, false);
+  timing_[6][1].stop();
+
   LOG_IF(INFO, *config_.verbose_) << "have " << tsdf_map_->getTsdfLayer().getNumberOfAllocatedBlocks() << " blocks.";
+  
+  timing_[6][2].start("Remove Distant Blocks");
   tsdf_map_->getTsdfLayerPtr()->removeDistantBlocks(T_G_C.getPosition(), max_block_distance_from_body_);
+  timing_[6][2].stop();
 }
 void TsdfMapper::setColor() {
   // Color map for intensity pointclouds.

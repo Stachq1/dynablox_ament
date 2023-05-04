@@ -111,7 +111,7 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
 
   timing[3].start("Clustering");
   Clusters clusters =
-      clustering_->performClustering(point_map, occupied_ever_free_voxel_indices, frame_counter_, cloud, cloud_info);
+      clustering_->performClustering(point_map, occupied_ever_free_voxel_indices, frame_counter_, cloud, cloud_info, timing);
   timing[3].stop();
 
   timing[4].start("Tracking");
@@ -123,7 +123,7 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
   timing[5].stop();
 
   timing[6].start("Integrate TSDF");
-  tsdf_mapper_->processPointCloudAndInsert(cloud, T_S_W);
+  tsdf_mapper_->processPointCloudAndInsert(cloud, T_S_W, timing);
   timing[6].stop();
 
   int i = -1;
@@ -137,17 +137,19 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
 }
 
 void MapUpdater::saveMap(std::string const& folder_path) {
+  std::cout << std::endl;
   LOG(INFO) << "Saving map to " << folder_path << " Pointcloud size: " << Dynamic_Cloud_->points.size() << " points.";
   if (Dynamic_Cloud_->points.size() > 0)
     pcl::io::savePCDFileBinary(folder_path + "/dynablox_output.pcd", *Dynamic_Cloud_);
 }
 
 void MapUpdater::Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& cloud_info) {
-  timing[3][1].start("Cluster IDs");
+  timing[4][1].start("Cluster IDs");
   // Associate current to previous cluster ids.
   trackClusterIDs(cloud, clusters);
-  timing[3][1].stop();
+  timing[4][1].stop();
   // Label the cloud info.
+  timing[4][2].start("Label Point");
   for (Cluster& cluster : clusters) {
     if (cluster.track_length >= config_.min_track_duration) {
       cluster.valid = true;
@@ -156,6 +158,7 @@ void MapUpdater::Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& clo
       }
     }
   }
+  timing[4][2].stop();
 }
 void MapUpdater::trackClusterIDs(const Cloud& cloud, Clusters& clusters) {
   // Compute the centroids of all clusters.

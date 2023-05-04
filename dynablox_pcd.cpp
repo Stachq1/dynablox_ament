@@ -79,9 +79,9 @@ int main(int argc, char** argv) {
     pcl::PointCloud<PointType>::Ptr pcd(new pcl::PointCloud<PointType>);
     pcl::io::loadPCDFile<PointType>(filename, *pcd);
     map_updater.run(pcd);
+    map_updater.timing[0].stop();
     cnt++;
     if (cnt > run_max) break;
-    map_updater.timing[0].stop();
   }
   map_updater.saveMap(pcd_parent);
   map_updater.timing.stop();

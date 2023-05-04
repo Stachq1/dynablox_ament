@@ -31,7 +31,7 @@ class TsdfMapper {
  public:
   TsdfMapper(common::Config::VoxbloxCfg& config);
   virtual ~TsdfMapper() = default;
-  void processPointCloudAndInsert(dynablox::Cloud& cloud, voxblox::Transformation& T_G_C);
+  void processPointCloudAndInsert(dynablox::Cloud& cloud, voxblox::Transformation& T_G_C, ufo::Timing& timing_);
 
   std::shared_ptr<TsdfMap> getTsdfMapPtr() { return tsdf_map_; }
   std::shared_ptr<const TsdfMap> getTsdfMapPtr() const { return tsdf_map_; }

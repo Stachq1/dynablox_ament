@@ -9,7 +9,7 @@ find_package(OpenMP REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common io)
 find_package(Threads REQUIRED)
-
+set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_MACOSX_RPATH 0)
 # recompile with -fPIC
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)

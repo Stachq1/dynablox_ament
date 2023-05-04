@@ -11,8 +11,7 @@ namespace dynablox {
 template <typename IndexT>
 class IndexGetter {
  public:
-  explicit IndexGetter(std::vector<IndexT> indices)
-      : indices_(std::move(indices)), current_index_(0) {}
+  explicit IndexGetter(std::vector<IndexT> indices) : indices_(std::move(indices)), current_index_(0) {}
   bool getNextIndex(IndexT* index) {
     CHECK_NOTNULL(index);
     mutex_.lock();

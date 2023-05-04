@@ -9,14 +9,15 @@
 
 #include <memory>
 #include <vector>
+
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-
 #include <voxblox/core/block.h>
 #include <voxblox/core/common.h>
 #include <voxblox/core/layer.h>
 #include <voxblox/core/voxel.h>
+
 #include "common/utils.h"
 
 namespace dynablox {
@@ -91,18 +92,16 @@ struct BoundingBox {
     return true;
   }
 
-  float extent() const {
-    return (max_corner.getVector3fMap() - min_corner.getVector3fMap()).norm();
-  }
+  float extent() const { return (max_corner.getVector3fMap() - min_corner.getVector3fMap()).norm(); }
 };
 
 // Indices of all points in the cloud belonging to this cluster.
 struct Cluster {
-  int id = -1;                // ID of the cluster set during tracking.
-  int track_length = 0;       // Frames this cluster has been tracked.
-  bool valid = false;         // Whether the cluster has met all cluster checks.
-  BoundingBox aabb;           // Axis-aligned bounding box of the cluster.
-  std::vector<int> points;    // Indices of points in cloud.
+  int id = -1;                    // ID of the cluster set during tracking.
+  int track_length = 0;           // Frames this cluster has been tracked.
+  bool valid = false;             // Whether the cluster has met all cluster checks.
+  BoundingBox aabb;               // Axis-aligned bounding box of the cluster.
+  std::vector<int> points;        // Indices of points in cloud.
   std::vector<PointType> voxels;  // Center points of voxels in this cluster.
 };
 

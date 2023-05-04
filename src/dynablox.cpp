@@ -147,7 +147,7 @@ void MapUpdater::saveMap(std::string const& folder_path) {
   } else if (config_.task_ == "clean") {
     LOG(INFO) << "Saving " << ANSI_MAGENTA "Clean Static map to " ANSI_RESET << folder_path
               << "\nPointcloud size: " << Static_Cloud_->points.size() << " points.";
-    save_cloud = Dynamic_Cloud_;
+    save_cloud = Static_Cloud_;
   } else {
     LOG(WARNING) << "Wrong task name, please check your config file. Need: [clean, detect]";
     return;

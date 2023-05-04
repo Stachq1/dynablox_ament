@@ -4,12 +4,12 @@
 # General.
 num_threads: 24
 verbose: false
-task: detect # clean, detect
+task: clean # clean, detect
 
 # Preprocessing.
 preprocessing:
   min_range: 0.5  # m
-  max_range: 20  # m
+  max_range: 80  # m
 
 # Ever-Free Integration.
 ever_free_integrator:

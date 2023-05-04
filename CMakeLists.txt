@@ -4,8 +4,9 @@ project(dynablox_benchmark)
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(default_build_type "Release")
-# set(CMAKE_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
 #############
 # PACKAGES  #
@@ -17,14 +18,15 @@ find_package(Glog REQUIRED)
 find_package(gflags REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/voxblox")
+find_package(voxblox REQUIRED)
 set(LOG_LIB glog::glog gflags)
-set(FUN_LIB ${PCL_LIBRARIES} voxblox Eigen3::Eigen yaml-cpp)
+set(FUN_LIB ${PCL_LIBRARIES} voxblox::voxblox Eigen3::Eigen yaml-cpp)
 
 #############
 # LIBRARIES #
 #############
 include_directories(${CMAKE_SOURCE_DIR}/build)
-include_directories(${CMAKE_SOURCE_DIR}/voxblox/include)
 include_directories(include)
 
 add_library(dufo_lib SHARED 

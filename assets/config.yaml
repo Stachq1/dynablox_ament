@@ -2,7 +2,8 @@
 
 # ----------- Motion Detector Parameters --------
 # General.
-num_threads: 16
+num_threads: 24
+verbose: false
 
 # Preprocessing.
 preprocessing:
@@ -47,4 +48,3 @@ voxblox:
   sensor_vertical_resolution: 64
   sensor_vertical_field_of_view_degrees: 33.22222
   use_const_weight: true
-  verbose: false

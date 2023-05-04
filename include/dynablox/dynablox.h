@@ -67,6 +67,6 @@ class MapUpdater {
   std::vector<voxblox::Point> previous_centroids_;
   std::vector<int> previous_ids_;
   std::vector<int> previous_track_lengths_;
-  pcl::PointCloud<PointType>::Ptr Dynamic_Cloud_;
+  pcl::PointCloud<PointType>::Ptr Dynamic_Cloud_, Static_Cloud_;
 };
 }  // namespace dynablox

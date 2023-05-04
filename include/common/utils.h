@@ -32,7 +32,7 @@ namespace common {
 struct Config {
   int num_threads = 16;
   bool verbose_ = false;
-
+  std::string task_ = "detect";
   double max_range_m = 80;
   double min_range_m = 0.1;
 

@@ -40,6 +40,8 @@ void MapUpdater::setConfig() {
   // Set Motion Detector Parameters
   config_.num_threads = yconfig["num_threads"].as<int>();
   config_.verbose_ = yconfig["verbose"].as<bool>();
+  config_.task_ = yconfig["task"].as<std::string>();
+
   // Set Preprocessing Parameters
   config_.min_range_m = yconfig["preprocessing"]["min_range"].as<double>();
   config_.max_range_m = yconfig["preprocessing"]["max_range"].as<double>();
@@ -108,8 +110,8 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
   timing[2].stop();
 
   timing[3].start("Clustering");
-  Clusters clusters =
-      clustering_->performClustering(point_map, occupied_ever_free_voxel_indices, frame_counter_, cloud, cloud_info, timing);
+  Clusters clusters = clustering_->performClustering(point_map, occupied_ever_free_voxel_indices, frame_counter_, cloud,
+                                                     cloud_info, timing);
   timing[3].stop();
 
   timing[4].start("Tracking");
@@ -128,18 +130,29 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
   // pcl::transformPointCloud(cloud, cloud, T_Sensor_World);
   for (const auto& pt : cloud.points) {
     ++i;
-    if (cloud_info.points[i].ever_free_level_dynamic) 
+    if (cloud_info.points[i].ever_free_level_dynamic)
       Dynamic_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
-    else 
+    else
       Static_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
   }
 }
 
 void MapUpdater::saveMap(std::string const& folder_path) {
+  pcl::PointCloud<PointType>::Ptr save_cloud;
   std::cout << std::endl;
-  LOG(INFO) << "Saving map to " << folder_path << " Pointcloud size: " << Static_Cloud_->points.size() << " points.";
-  if (Static_Cloud_->points.size() > 0)
-    pcl::io::savePCDFileBinary(folder_path + "/dynablox_output.pcd", *Static_Cloud_);
+  if (config_.task_ == "detect") {
+    LOG(INFO) << "Saving " << ANSI_MAGENTA "Only Dynamic Part: " ANSI_RESET << folder_path
+              << "\nPointcloud size: " << Dynamic_Cloud_->points.size() << " points.";
+    save_cloud = Dynamic_Cloud_;
+  } else if (config_.task_ == "clean") {
+    LOG(INFO) << "Saving " << ANSI_MAGENTA "Clean Static map to " ANSI_RESET << folder_path
+              << "\nPointcloud size: " << Static_Cloud_->points.size() << " points.";
+    save_cloud = Dynamic_Cloud_;
+  } else {
+    LOG(WARNING) << "Wrong task name, please check your config file. Need: [clean, detect]";
+    return;
+  }
+  if (save_cloud->points.size() > 0) pcl::io::savePCDFileBinary(folder_path + "/dynablox_output.pcd", *save_cloud);
 }
 
 void MapUpdater::Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& cloud_info) {
@@ -258,7 +271,7 @@ bool MapUpdater::processPointcloud(pcl::PointCloud<PointType>& cloud, CloudInfo&
     double delta_x = pt.x - cloud_info.sensor_position.x;
     double delta_y = pt.y - cloud_info.sensor_position.y;
     double delta_z = pt.z - cloud_info.sensor_position.z;
-    const float norm = std::sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
+    const float norm = std::sqrt(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z);
     PointInfo& info = cloud_info.points.at(i);
     info.distance_to_sensor = norm;
     i++;
@@ -272,9 +285,8 @@ void MapUpdater::setUpPointMap(const pcl::PointCloud<PointType>& cloud, BlockToP
   // Identifies for any LiDAR point the block it falls in and constructs the
   // hash-map block2points_map mapping each block to the LiDAR points that
   // fall into the block.
-  const voxblox::HierarchicalIndexIntMap block2points_map =
-      buildBlockToPointsMap(cloud);
-  
+  const voxblox::HierarchicalIndexIntMap block2points_map = buildBlockToPointsMap(cloud);
+
   // Builds the voxel2point-map in parallel blockwise.
   std::vector<BlockIndex> block_indices(block2points_map.size());
   size_t i = 0;
@@ -295,17 +307,15 @@ void MapUpdater::setUpPointMap(const pcl::PointCloud<PointType>& cloud, BlockToP
       // Process until no more blocks.
       while (index_getter.getNextIndex(&block_index)) {
         VoxelToPointMap result;
-        this->blockwiseBuildPointMap(cloud, block_index,
-                                     block2points_map.at(block_index), result,
+        this->blockwiseBuildPointMap(cloud, block_index, block2points_map.at(block_index), result,
                                      local_occupied_indices, cloud_info);
         local_point_map.insert(std::pair(block_index, result));
       }
 
       // After processing is done add data to the output map.
       std::lock_guard<std::mutex> lock(aggregate_results_mutex);
-      occupied_ever_free_voxel_indices.insert(
-          occupied_ever_free_voxel_indices.end(),
-          local_occupied_indices.begin(), local_occupied_indices.end());
+      occupied_ever_free_voxel_indices.insert(occupied_ever_free_voxel_indices.end(), local_occupied_indices.begin(),
+                                              local_occupied_indices.end());
       point_map.merge(local_point_map);
     }));
   }

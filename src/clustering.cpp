@@ -17,35 +17,25 @@ Clustering::Clustering(const common::Config::ClusterCfg& config, TsdfLayer::Ptr 
 
 Clusters Clustering::performClustering(const BlockToPointMap& point_map,
                                        const ClusterIndices& occupied_ever_free_voxel_indices, const int frame_counter,
-                                       const Cloud& cloud, CloudInfo& cloud_info,
-                                       ufo::Timing& timing_) const {
-
+                                       const Cloud& cloud, CloudInfo& cloud_info, ufo::Timing& timing_) const {
   // Cluster all occupied voxels.
   const std::vector<ClusterIndices> voxel_cluster_indices =
       voxelClustering(occupied_ever_free_voxel_indices, frame_counter);
 
-  timing_[3][1].start("Group AABB");
   // Group points into clusters.
   Clusters clusters = inducePointClusters(point_map, voxel_cluster_indices);
   for (Cluster& cluster : clusters) {
     computeAABB(cloud, cluster);
   }
-  timing_[3][1].stop();
 
-  timing_[3][2].start("Merge Cluster");
   // Merge close Clusters.
   mergeClusters(cloud, clusters);
-  timing_[3][2].stop();
 
-  timing_[3][3].start("Filter Cluster");
   // Apply filters to remove spurious clusters.
   applyClusterLevelFilters(clusters);
-  timing_[3][3].stop();
 
-  timing_[3][4].start("Set Dynamic Flag");
   // Label all remaining points as dynamic.
   setClusterLevelDynamicFlagOfallPoints(clusters, cloud_info);
-  timing_[3][4].stop();
   return clusters;
 }
 

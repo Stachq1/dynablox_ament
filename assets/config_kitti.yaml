@@ -9,7 +9,7 @@ task: detect # clean, detect
 # Preprocessing.
 preprocessing:
   min_range: 0.5  # m
-  max_range: 20  # m
+  max_range: 80  # m
 
 # Ever-Free Integration.
 ever_free_integrator:

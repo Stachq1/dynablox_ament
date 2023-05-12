@@ -123,7 +123,9 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
   timing[5].stop();
 
   timing[6].start("Integrate TSDF");
-  tsdf_mapper_->processPointCloudAndInsert(cloud, T_S_W, timing);
+  Cloud origin_cloud;
+  pcl::transformPointCloud(cloud, origin_cloud, T_Sensor_World.inverse());
+  tsdf_mapper_->processPointCloudAndInsert(origin_cloud, T_S_W, timing);
   timing[6].stop();
 
   int i = -1;

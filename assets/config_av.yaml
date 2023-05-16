@@ -36,14 +36,15 @@ tracking:
 # Voxblox parameters.
 voxblox:
   # SDF.
-  tsdf_voxel_size: 0.1
+  tsdf_voxel_size: 0.2
   truncation_distance: 0.4
   tsdf_voxels_per_side: 16
   max_weight: 1000
   
   # Integration.
   method: projective
+  # based on the sensor datasheet vlp-32c 
   sensor_horizontal_resolution: 2048
-  sensor_vertical_resolution: 64
-  sensor_vertical_field_of_view_degrees: 33.22222
+  sensor_vertical_resolution: 121
+  sensor_vertical_field_of_view_degrees: 40
   use_const_weight: true

@@ -29,8 +29,8 @@ int main(int argc, char** argv) {
   google::SetStderrLogging(google::INFO);
 
   if (argc < 3) {
-    LOG(ERROR) << "Usage: ./removert_run [pcd_folder] [config_file]";
-    return 1;
+      LOG(ERROR) << "Usage: " << argv[0] << " [pcd_folder] [config_file]";
+      return 1;
   }
   std::string pcd_parent = argv[1];  // we assume that rawmap is in pcd_parent;
   std::string config_file = argv[2];

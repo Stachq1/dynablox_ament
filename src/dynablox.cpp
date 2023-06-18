@@ -44,7 +44,11 @@ void MapUpdater::setConfig() {
 
   // Set Preprocessing Parameters
   config_.min_range_m = yconfig["preprocessing"]["min_range"].as<double>();
-  config_.max_range_m = yconfig["preprocessing"]["max_range"].as<double>();
+  
+  if(yconfig["preprocessing"]["max_range"].as<double>()>0)
+    config_.max_range_m = yconfig["preprocessing"]["max_range"].as<double>();
+  else
+    config_.max_range_m = std::numeric_limits<double>::infinity();
 
   // Set Ever-Free Integration Parameters
   config_.ever_free_integrator_.counter_to_reset = yconfig["ever_free_integrator"]["counter_to_reset"].as<int>();

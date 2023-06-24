@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 project(dynablox_benchmark)
 
+# see here: https://github.com/PointCloudLibrary/pcl/issues/3680#issuecomment-700642602
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+endif()
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

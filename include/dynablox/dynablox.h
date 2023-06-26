@@ -51,7 +51,7 @@ class MapUpdater {
   std::shared_ptr<Clustering> clustering_;
   std::shared_ptr<EverFreeIntegrator> ever_free_integrator_;
 
-  bool processPointcloud(pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info);
+  bool processPointCloud(pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info);
   void Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& cloud_info);
   void setUpPointMap(const pcl::PointCloud<PointType>& cloud, BlockToPointMap& point_map,
                      std::vector<voxblox::VoxelKey>& occupied_ever_free_voxel_indices, CloudInfo& cloud_info) const;

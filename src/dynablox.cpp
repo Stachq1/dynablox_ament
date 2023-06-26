@@ -26,8 +26,9 @@ MapUpdater::MapUpdater(const std::string& config_file_path) {
   Dynamic_Cloud_.reset(new pcl::PointCloud<PointType>);
   Static_Cloud_.reset(new pcl::PointCloud<PointType>);
   tsdf_mapper_ = std::make_shared<voxblox::TsdfMapper>(config_.voxblox_integrator_);
-  // I don't know why the origin one can directly use raw ptr without any
-  // problem Since it will cause double free problem
+
+  // (Note from Kin) I don't know why the origin one can directly use raw ptr without any
+  // problem Since it will cause double free problem. I used shared_ptr to avoid this
   tsdf_layer_ = std::shared_ptr<TsdfLayer>(tsdf_mapper_->getTsdfMapPtr()->getTsdfLayerPtr(), [](TsdfLayer*) {});
 
   // function
@@ -104,7 +105,7 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
 
   frame_counter_++;
   timing[1].start("Process Pointcloud");
-  processPointcloud(cloud, cloud_info);
+  processPointCloud(cloud, cloud_info);
   timing[1].stop();
 
   timing[2].start("Index Setup");
@@ -184,6 +185,7 @@ void MapUpdater::Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& clo
   }
   timing[4][2].stop();
 }
+
 void MapUpdater::trackClusterIDs(const Cloud& cloud, Clusters& clusters) {
   // Compute the centroids of all clusters.
   std::vector<voxblox::Point> centroids(clusters.size());
@@ -276,7 +278,8 @@ void MapUpdater::trackClusterIDs(const Cloud& cloud, Clusters& clusters) {
     previous_track_lengths_.push_back(cluster.track_length);
   }
 }
-bool MapUpdater::processPointcloud(pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info) {
+
+bool MapUpdater::processPointCloud(pcl::PointCloud<PointType>& cloud, CloudInfo& cloud_info) {
   cloud_info.points = std::vector<PointInfo>(cloud.size());
   size_t i = 0;
   for (const auto& pt : cloud) {

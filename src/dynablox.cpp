@@ -132,14 +132,16 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
   tsdf_mapper_->processPointCloudAndInsert(origin_cloud, T_S_W, timing);
   timing[6].stop();
 
-  int i = -1;
-  // pcl::transformPointCloud(cloud, cloud, T_Sensor_World);
-  for (const auto& pt : cloud.points) {
-    ++i;
-    if (cloud_info.points[i].ever_free_level_dynamic)
-      Dynamic_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
-    else
-      Static_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
+  // use the cluster info to decide better than point voxel
+  for (const Cluster& cluster : clusters) {
+    for (int index : cluster.points){
+      Dynamic_Cloud_->points.emplace_back(cloud[index].x, cloud[index].y, cloud[index].z);
+    }
+  }
+  size_t i = 0;
+  for (const auto& point : cloud.points) {
+    if (!cloud_info.points[i++].cluster_level_dynamic)
+      Static_Cloud_->points.emplace_back(point.x, point.y, point.z);
   }
 }
 
@@ -158,7 +160,11 @@ void MapUpdater::saveMap(std::string const& folder_path) {
     LOG(WARNING) << "Wrong task name, please check your config file. Need: [clean, detect]";
     return;
   }
-  if (save_cloud->points.size() > 0) pcl::io::savePCDFileBinary(folder_path + "/dynablox_output.pcd", *save_cloud);
+  if (save_cloud->points.size() > 0){
+    LOG(INFO) << "Saving folder: " << folder_path + "/dynablox_output.pcd";
+    pcl::io::savePCDFileBinary(folder_path + "/dynablox_output.pcd", *save_cloud);
+  }
+    
 }
 
 void MapUpdater::Tracking(const Cloud& cloud, Clusters& clusters, CloudInfo& cloud_info) {

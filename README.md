@@ -9,6 +9,8 @@ Don't run it now
 
 ## Dependencies
 
+ROS-full: for boost and Eigen
+
 ### glog gflag (only for debug)
 glog gflag for debug only, will remove on release version
 ```sh
@@ -22,11 +24,13 @@ If you install in Ubuntu 22.04, please check this commit: https://github.com/jbe
 
 ```sh
 cd ${Tmp_folder}
-git clone https://github.com/jbeder/yaml-cpp.git && cd yaml-cpp
+git clone --branch yaml-cpp-0.6.0 --single-branch https://github.com/jbeder/yaml-cpp.git && cd yaml-cpp
 env CFLAGS='-fPIC' CXXFLAGS='-fPIC' cmake -Bbuild
 cmake --build build --config Release
 sudo cmake --build build --config Release --target install
 ```
+
+An issue mentioned here, and I needed set 0.6.0 version to get rid of error, check [this comment](https://stackoverflow.com/a/75293221/9281669)
 ### Build
 ```bash
 mkdir build && cd build

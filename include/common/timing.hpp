@@ -39,8 +39,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_UTIL_TIMING_HPP
-#define UFO_UTIL_TIMING_HPP
+#pragma once
 
 // STL
 #include <chrono>
@@ -278,13 +277,6 @@ class Timer
 	double      variance_time_ = 0.0;
 	double      min_time_      = std::numeric_limits<double>::max();
 	double      max_time_      = std::numeric_limits<double>::lowest();
-
-	// std::chrono::duration<double> last_;
-	// std::chrono::duration<double> total_time_ = std::chrono::duration<double>::zero();
-	// std::chrono::duration<double> mean_time_ = std::chrono::duration<double>::zero();
-	// std::chrono::duration<double> variance_time_ = std::chrono::duration<double>::zero();
-	// std::chrono::duration<double> min_time_ = std::chrono::duration<double>::max();
-	// std::chrono::duration<double> max_time_ = std::chrono::duration<double>::min();
 };
 
 class Timing : public Timer
@@ -344,18 +336,20 @@ class Timing : public Timer
 	static constexpr char const* boldCyanColor() { return "\033[1m\033[36m"; }
 	static constexpr char const* boldWhiteColor() { return "\033[1m\033[37m"; }
 
-	void print(std::string title = "", bool random_colors = false, bool bold = false,
+	void print(
+				std::string title = "Default",
+				bool random_colors = false, bool bold = false,
 	           std::size_t group_colors_level = std::numeric_limits<std::size_t>::max(),
 	           int         precision          = 4) const
 	{
 		printSeconds(title, random_colors, bold, group_colors_level, precision);
 	}
 
-	void printSeconds(std::string title = "",
+	void printSeconds(
+		std::string title = "Default",
 	    bool random_colors = false, bool bold = false,
 	    std::size_t group_colors_level = std::numeric_limits<std::size_t>::max(),
-	    int         precision          = 4
-		) const
+	    int         precision          = 4) const
 	{
 		static constexpr std::array const RC{redColor(),  greenColor(),   yellowColor(),
 		                                     blueColor(), magentaColor(), cyanColor(),
@@ -380,7 +374,7 @@ class Timing : public Timer
 			right_pad[i] = std::ceil((width[i] - static_cast<int>(label[i].length())) / 2.0);
 		}
 
-		printf("%sTimings in seconds (s)\n",title.c_str());
+		printf("%s Timings in seconds (s)\n", title.c_str());
 		printf("%*s%s%*s", left_pad[0], "", label[0].c_str(), right_pad[0], "");
 		for (std::size_t i{1}; label.size() != i; ++i) {
 			printf("\t%*s%s%*s", left_pad[i], "", label[i].c_str(), right_pad[i], "");
@@ -420,23 +414,6 @@ class Timing : public Timer
 		}
 	}
 
-	void printMilliseconds(bool random_colors = false, bool bold = false, int width = 5,
-	                       int precision = 4, int total_width = 5, int total_precision = 2,
-	                       int step_width = 6) const
-	{
-	}
-
-	void printMicroseconds(bool random_colors = false, bool bold = false, int width = 5,
-	                       int precision = 4, int total_width = 5, int total_precision = 2,
-	                       int step_width = 6) const
-	{
-	}
-
-	void printNanoseconds() const
-	{
-		// TODO: Implement
-	}
-
  private:
 	int longestTag() const
 	{
@@ -449,7 +426,8 @@ class Timing : public Timer
 
 	int longestTotal() const
 	{
-		int l = std::to_string(static_cast<int>(totalSeconds())).length();
+		int l = (std::isnan(totalSeconds())) ? nan_gap_ : std::to_string(static_cast<int>(totalSeconds())).length();
+		// int l = std::to_string(static_cast<int>(totalSeconds())).length();
 		for (auto const& [_, t] : timer_) {
 			l = std::max(l, t.longestTotal());
 		}
@@ -458,7 +436,8 @@ class Timing : public Timer
 
 	int longestLast() const
 	{
-		int l = std::to_string(static_cast<int>(lastSeconds())).length();
+		int l = (std::isnan(lastSeconds())) ? nan_gap_ : std::to_string(static_cast<int>(lastSeconds())).length();
+		// int l = std::to_string(static_cast<int>(lastSeconds())).length();
 		for (auto const& [_, t] : timer_) {
 			l = std::max(l, t.longestLast());
 		}
@@ -467,7 +446,8 @@ class Timing : public Timer
 
 	int longestMean() const
 	{
-		int l = std::to_string(static_cast<int>(meanSeconds())).length();
+		int l = (std::isnan(meanSeconds())) ? nan_gap_ : std::to_string(static_cast<int>(meanSeconds())).length();
+		// int l = std::to_string(static_cast<int>(meanSeconds())).length();
 		for (auto const& [_, t] : timer_) {
 			l = std::max(l, t.longestMean());
 		}
@@ -476,7 +456,8 @@ class Timing : public Timer
 
 	int longestStd() const
 	{
-		int l = std::to_string(static_cast<int>(stdSeconds())).length();
+		int l = (std::isnan(stdSeconds())) ? nan_gap_ : std::to_string(static_cast<int>(stdSeconds())).length();
+		// int l = std::to_string(static_cast<int>(stdSeconds())).length();
 		for (auto const& [_, t] : timer_) {
 			l = std::max(l, t.longestStd());
 		}
@@ -485,7 +466,8 @@ class Timing : public Timer
 
 	int longestMin() const
 	{
-		int l = std::to_string(static_cast<int>(minSeconds())).length();
+		int l = (std::isnan(minSeconds())) ? nan_gap_ : std::to_string(static_cast<int>(minSeconds())).length();
+		// int l = std::to_string(static_cast<int>(minSeconds())).length();
 		for (auto const& [_, t] : timer_) {
 			l = std::max(l, t.longestMin());
 		}
@@ -494,7 +476,8 @@ class Timing : public Timer
 
 	int longestMax() const
 	{
-		int l = std::to_string(static_cast<int>(maxSeconds())).length();
+		int l = (std::isnan(maxSeconds())) ? nan_gap_ : std::to_string(static_cast<int>(maxSeconds())).length();
+		// int l = std::to_string(static_cast<int>(maxSeconds())).length();
 		for (auto const& [_, t] : timer_) {
 			l = std::max(l, t.longestMax());
 		}
@@ -503,7 +486,8 @@ class Timing : public Timer
 
 	int longestSteps() const
 	{
-		int l = std::to_string(numSamples()).length();
+		int l = (std::isnan(numSamples())) ? nan_gap_ : std::to_string(static_cast<int>(numSamples())).length();
+		// int l = std::to_string(numSamples()).length();
 		for (auto const& [_, t] : timer_) {
 			l = std::max(l, t.longestSteps());
 		}
@@ -514,7 +498,6 @@ class Timing : public Timer
 	std::map<std::size_t, Timing> timer_;
 	std::string                   tag_;
 	std::string                   color_;
+	std::size_t				   nan_gap_ = 0;
 };
 }  // namespace ufo
-
-#endif  // UFO_UTIL_TIMING_HPP

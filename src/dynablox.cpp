@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2022-now, RPL, KTH Royal Institute of Technology
  * MIT License
- * @author Kin ZHANG (https://kin-zhang.github.io/)
+ * @author Qingwen Zhang (https://kin-zhang.github.io/)
  * @date: 2023-05-02 17:03
  * @details: No ROS version, speed up the process
  *
@@ -41,7 +41,6 @@ void MapUpdater::setConfig() {
   // Set Motion Detector Parameters
   config_.num_threads = yconfig["num_threads"].as<int>();
   config_.verbose_ = yconfig["verbose"].as<bool>();
-  config_.task_ = yconfig["task"].as<std::string>();
 
   // Set Preprocessing Parameters
   config_.min_range_m = yconfig["preprocessing"]["min_range"].as<double>();
@@ -161,18 +160,11 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
 void MapUpdater::saveMap(std::string const& folder_path) {
   pcl::PointCloud<PointType>::Ptr save_cloud;
   std::cout << std::endl;
-  if (config_.task_ == "detect") {
-    LOG(INFO) << "Saving " << ANSI_MAGENTA "Only Dynamic Part: " ANSI_RESET << folder_path
-              << "\nPointcloud size: " << Dynamic_Cloud_->points.size() << " points.";
-    save_cloud = Dynamic_Cloud_;
-  } else if (config_.task_ == "clean") {
-    LOG(INFO) << "Saving " << ANSI_MAGENTA "Clean Static map to " ANSI_RESET << folder_path
-              << "\nPointcloud size: " << Static_Cloud_->points.size() << " points.";
-    save_cloud = Static_Cloud_;
-  } else {
-    LOG(WARNING) << "Wrong task name, please check your config file. Need: [clean, detect]";
-    return;
-  }
+  
+  LOG(INFO) << "Saving " << ANSI_MAGENTA "Clean Static map to " ANSI_RESET << folder_path
+            << "\nPointcloud size: " << Static_Cloud_->points.size() << " points.";
+  save_cloud = Static_Cloud_;
+
   if (save_cloud->points.size() > 0){
     LOG(INFO) << "Saving folder: " << folder_path + "/dynablox_output.pcd";
     pcl::io::savePCDFileBinary(folder_path + "/dynablox_output.pcd", *save_cloud);

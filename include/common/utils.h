@@ -2,7 +2,7 @@
 /**
  * Copyright (C) 2022-now, RPL, KTH Royal Institute of Technology
  * Only this file in under MIT License
- * Author: Kin ZHANG (https://kin-zhang.github.io/)
+ * Author: Qingwen Zhang (https://kin-zhang.github.io/)
  * Date: 2023-04-04 23:19
  * Description: Config header
  */
@@ -32,7 +32,6 @@ namespace common {
 struct Config {
   int num_threads = 16;
   bool verbose_ = false;
-  std::string task_ = "detect";
   double max_range_m = 80;
   double min_range_m = 0.1;
 

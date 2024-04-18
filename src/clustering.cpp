@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2023-now, RPL, KTH Royal Institute of Technology
  * MIT License
- * @author Kin ZHANG (https://kin-zhang.github.io/)
+ * @author Qingwen Zhang (https://kin-zhang.github.io/)
  * @date: 2023-05-02 19:43
  * @details: No ROS version, speed up the process, check our benchmark in
  * dufomap

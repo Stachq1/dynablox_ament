@@ -4,7 +4,6 @@
 # General.
 num_threads: 24
 verbose: false
-task: detect # clean, detect
 
 # Preprocessing.
 preprocessing:

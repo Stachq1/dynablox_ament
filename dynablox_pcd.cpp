@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2022-now, RPL, KTH Royal Institute of Technology
  * MIT License
- * @author Kin ZHANG (https://kin-zhang.github.io/)
+ * @author Qingwen Zhang (https://kin-zhang.github.io/)
  * @date: 2023-05-02 13:07
  * @details: No ROS version, speed up the process
  *

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.5)
 project(dynablox)
 
 # see here: https://github.com/PointCloudLibrary/pcl/issues/3680#issuecomment-700642602

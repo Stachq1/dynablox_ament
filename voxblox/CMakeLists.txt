@@ -1,33 +1,28 @@
-cmake_minimum_required(VERSION 3.17)
-project(voxblox
-        VERSION 1.0.0
-        DESCRIPTION "Voxblox Library"
-        LANGUAGES CXX
-)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+cmake_minimum_required(VERSION 3.5)
+project(voxblox VERSION 1.0.0 DESCRIPTION "Voxblox Library")
 
+# Find dependencies
+find_package(ament_cmake REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(Eigen3 REQUIRED)
 find_package(OpenMP REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common io)
 find_package(Threads REQUIRED)
-set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_MACOSX_RPATH 0)
-# recompile with -fPIC
+
+# Set compilation options
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_definitions(-std=c++14 -Wall -Wextra)
+add_compile_options(-Wall -Wextra)
 
 # Compile protobuf files
-set(PROTO_DEFNS proto/voxblox/Block.proto
-                proto/voxblox/Layer.proto)
-set(BASE_PATH "proto")
-set(PROTOBUF_COMPILE_PYTHON true)
-
+set(PROTO_DEFNS proto/voxblox/Block.proto proto/voxblox/Layer.proto)
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_DEFNS})
 add_library(${PROJECT_NAME}_proto ${PROTO_SRCS})
-target_link_libraries(${PROJECT_NAME}_proto ${PROTOBUF_LIBRARIES})
+ament_target_dependencies(${PROJECT_NAME}_proto Protobuf)
 
+# Include directories
 include_directories(${CMAKE_SOURCE_DIR}/build)
 
 # Add voxblox library
@@ -66,48 +61,28 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} ${PROTOBUF_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+ament_target_dependencies(${PROJECT_NAME}
+  Boost
+  Eigen3
+  PCL
+  Protobuf
+  Threads
+)
+
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_proto)
 
-
-# IDEs should put the headers in a nice place
-source_group(TREE "${PROJECT_SOURCE_DIR}/include" PREFIX "Header Files" FILES ${HEADER_LIST})
-
+# Install targets
 install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_proto
-	EXPORT voxbloxTargets
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
 
-INSTALL(EXPORT voxbloxTargets
-	FILE "voxbloxTargets.cmake"
-	NAMESPACE voxblox::
-	DESTINATION lib/cmake/${PROJECT_NAME}
-)
-export(EXPORT voxbloxTargets NAMESPACE voxblox::)
+install(DIRECTORY include/ DESTINATION include)
 
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-	"${PROJECT_SOURCE_DIR}/cmake/voxbloxConfig.cmake.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfig.cmake"
-	INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
-)
-
-write_basic_package_version_file(
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfigVersion.cmake"
-	VERSION ${PROJECT_VERSION}
-	COMPATIBILITY SameMajorVersion
-)
-
-INSTALL(
-	FILES
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfig.cmake"
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfigVersion.cmake"
-	DESTINATION lib/cmake/${PROJECT_NAME}
-)
-
-install(
-	DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-	DESTINATION include
-)
+# Export package
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(Boost Eigen3 PCL Protobuf Threads)
+ament_package()

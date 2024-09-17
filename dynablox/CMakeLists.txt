@@ -17,10 +17,6 @@ add_compile_definitions(GLOG_USE_GLOG_EXPORT)
 #############
 # PACKAGES  #
 #############
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_subdirectory(voxblox)
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/voxblox")
-
 find_package(ament_cmake REQUIRED)
 find_package(PCL REQUIRED)
 find_package(Glog REQUIRED)

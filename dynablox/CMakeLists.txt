@@ -23,6 +23,7 @@ find_package(Glog REQUIRED)
 find_package(gflags REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(voxblox REQUIRED)
 set(LOG_LIB glog::glog gflags)
 set(FUN_LIB ${PCL_LIBRARIES} voxblox::voxblox Eigen3::Eigen yaml-cpp)
 
@@ -48,7 +49,7 @@ install(TARGETS dm_lib
   RUNTIME DESTINATION bin
 )
 
-ament_export_dependencies(PCL Glog gflags Eigen3 yaml-cpp)
+ament_export_dependencies(PCL Glog gflags Eigen3 yaml-cpp voxblox)
 ament_export_include_directories(include)
 ament_export_libraries(dm_lib)
 

@@ -11,6 +11,10 @@ RUN apt-get update && apt-get install -y \
     libeigen3-dev \
     libgoogle-glog-dev \
     libyaml-cpp-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libboost-program-options-dev \
+    libboost-test-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Source the ROS environment

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+    <name>voxblox</name>
+    <version>0.0.1</version>
+    <description>Voxblox build using ament</description>
+    <maintainer email="spiasecki@ethz.ch">Stanislaw Piasecki</maintainer>
+    <license>BSD</license>
+
+    <buildtool_depend>ament_cmake</buildtool_depend>
+
+    <depend>pcl_conversions</depend>
+    <depend>libgoogle-glog-dev</depend>
+    <depend>libboost-dev</depend>
+    <depend>eigen3_cmake_module</depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>

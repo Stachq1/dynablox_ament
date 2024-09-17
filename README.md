@@ -34,10 +34,16 @@ For more depedenices or one Dockerfile for all, check:
 
 ### Build and Run
 
+Data example (Teaser data on KITTI sequence 00 only 384.8MB):
+```bash
+wget https://zenodo.org/records/10886629/files/00.zip
+unzip 00.zip -d ${data_path, e.g. /home/kin/data}
+```
+
 ```bash
 cmake -B build && cmake --build build
 
-./build/dynablox_run /home/kin//data/00 assets/config.yaml -1
+./build/dynablox_run /home/kin/data/00 assets/config.yaml -1
 ```
 
 Demo effect:
@@ -59,9 +65,23 @@ Please also cite original work by clicking to the fork on top (core method).
   doi={10.1109/ITSC57777.2023.10422094}
 }
 @article{daniel2024dufomap,
-    author    = {Daniel, Duberg and Zhang, Qingwen and Jia, Mingkai and Jensfelt, Patric},
-    title     = {DUFOMap: Efficient Dynamic Awareness Mapping},
-    journal   = {arXiv preprint arXiv:2403.01449},
-    year      = {2024},
+  author={Duberg, Daniel and Zhang, Qingwen and Jia, Mingkai and Jensfelt, Patric},
+  journal={IEEE Robotics and Automation Letters}, 
+  title={{DUFOMap}: Efficient Dynamic Awareness Mapping}, 
+  year={2024},
+  volume={9},
+  number={6},
+  pages={5038-5045},
+  doi={10.1109/LRA.2024.3387658}
+}
+@article{schmid2023dynablox,
+  title={Dynablox: Real-time Detection of Diverse Dynamic Objects in Complex Environments},
+  author={Schmid, Lukas, and Andersson, Olov, and Sulser, Aurelio, and Pfreundschuh, Patrick, and Siegwart, Roland},
+  booktitle={IEEE Robotics and Automation Letters (RA-L)},
+  year={2023},
+  volume={8},
+  number={10},
+  pages={6259 - 6266},
+  doi={10.1109/LRA.2023.3305239}
 }
 ```

@@ -24,7 +24,6 @@ find_package(Glog REQUIRED)
 find_package(gflags REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(voxblox REQUIRED)
 set(LOG_LIB glog::glog gflags)
 set(FUN_LIB ${PCL_LIBRARIES} voxblox::voxblox Eigen3::Eigen yaml-cpp)
 
@@ -39,7 +38,7 @@ add_library(dm_lib SHARED
             src/clustering.cpp 
             src/TsdfMapper.cpp)
 add_dependencies(dm_lib voxblox)
-target_link_libraries(dm_lib ${LOG_LIB} yaml-cpp ${FUN_LIB})
+target_link_libraries(dm_lib ${LOG_LIB} ${FUN_LIB})
 
 add_executable(dynablox_run dynablox_pcd.cpp)
 target_link_libraries(dynablox_run dm_lib)

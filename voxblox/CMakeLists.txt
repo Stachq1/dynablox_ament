@@ -56,6 +56,7 @@ set(${PROJECT_NAME}_SRCS
 )
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
+add_library(voxblox::voxblox ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

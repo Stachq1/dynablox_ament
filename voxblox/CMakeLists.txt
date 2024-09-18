@@ -29,8 +29,6 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_DEFNS})
 add_library(${PROJECT_NAME}_proto ${PROTO_SRCS})
 target_link_libraries(${PROJECT_NAME}_proto ${PROTOBUF_LIBRARIES})
 
-include_directories(${CMAKE_SOURCE_DIR}/build)
-
 # Add voxblox library
 set(${PROJECT_NAME}_SRCS
   src/alignment/icp.cc
@@ -65,11 +63,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   ${Eigen3_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
 )
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+# Add the newly generated .pb.h files to include directories
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
 
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} ${PROTOBUF_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_proto)
-
 
 # IDEs should put the headers in a nice place
 source_group(TREE "${PROJECT_SOURCE_DIR}/include" PREFIX "Header Files" FILES ${HEADER_LIST})
@@ -79,33 +78,6 @@ install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_proto
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-INSTALL(EXPORT voxbloxTargets
-	FILE "voxbloxTargets.cmake"
-	NAMESPACE voxblox::
-	DESTINATION lib/cmake/${PROJECT_NAME}
-)
-export(EXPORT voxbloxTargets NAMESPACE voxblox::)
-
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-	"${PROJECT_SOURCE_DIR}/cmake/voxbloxConfig.cmake.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfig.cmake"
-	INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
-)
-
-write_basic_package_version_file(
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfigVersion.cmake"
-	VERSION ${PROJECT_VERSION}
-	COMPATIBILITY SameMajorVersion
-)
-
-INSTALL(
-	FILES
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfig.cmake"
-	"${CMAKE_CURRENT_BINARY_DIR}/voxbloxConfigVersion.cmake"
-	DESTINATION lib/cmake/${PROJECT_NAME}
 )
 
 install(

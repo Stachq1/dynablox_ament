@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y \
     libboost-thread-dev \
     libboost-program-options-dev \
     libboost-test-dev \
+    protobuf-compiler \
+    libpcl-dev \
+    vim \
     && rm -rf /var/lib/apt/lists/*
 
 # Source the ROS environment

@@ -16,6 +16,7 @@ find_package(PCL REQUIRED COMPONENTS common io)
 find_package(Threads REQUIRED)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_MACOSX_RPATH 0)
+set(CMAKE_C_FLAGS "-Werror=implicit-function-declaration")
 # recompile with -fPIC
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_definitions(-std=c++14 -Wall -Wextra)

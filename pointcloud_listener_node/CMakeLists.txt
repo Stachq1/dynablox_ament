@@ -18,6 +18,9 @@ include_directories(
 # Add executable
 add_executable(pointcloud_listener_node src/pointcloud_listener_node.cpp)
 
+# Add the voxblox generated .pb.h files to include directories
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
+
 # Link libraries
 ament_target_dependencies(pointcloud_listener_node
     PCL

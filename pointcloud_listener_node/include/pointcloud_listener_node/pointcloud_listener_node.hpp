@@ -11,13 +11,13 @@
 
 class PointCloudListenerNode : public rclcpp::Node {
 public:
-  PointCloudListenerNode();
+  PointCloudListenerNode(std::string node_name);
 
 private:
   void pclCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
 
   std::shared_ptr<dynablox::MapUpdater> map_updater_;
-  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pclSub_;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pcl_sub_;
   std::string pcl_topic_;
 };
 

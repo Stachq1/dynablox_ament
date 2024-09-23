@@ -24,26 +24,26 @@ find_package(gflags REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(voxblox REQUIRED)
-set(LOG_LIB glog::glog gflags)
-set(FUN_LIB ${PCL_LIBRARIES} voxblox::voxblox Eigen3::Eigen yaml-cpp)
 
 #############
 # LIBRARIES #
 #############
-include_directories(${CMAKE_SOURCE_DIR}/build)
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/build include)
 
-add_library(dm_lib SHARED 
-            src/dynablox.cpp 
-            src/clustering.cpp 
+add_library(${PROJECT_NAME} SHARED
+            src/dynablox.cpp
+            src/clustering.cpp
             src/TsdfMapper.cpp)
-add_dependencies(dm_lib voxblox)
-target_link_libraries(dm_lib ${LOG_LIB} ${FUN_LIB})
+
+# Add the voxblox generated .pb.h files to include directories
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
+
+ament_target_dependencies(${PROJECT_NAME} PCL Glog gflags Eigen3 yaml-cpp voxblox)
 
 #############
 # INSTALL   #
 #############
-install(TARGETS dm_lib
+install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -51,6 +51,6 @@ install(TARGETS dm_lib
 
 ament_export_dependencies(PCL Glog gflags Eigen3 yaml-cpp voxblox)
 ament_export_include_directories(include)
-ament_export_libraries(dm_lib)
+ament_export_libraries(${PROJECT_NAME})
 
 ament_package()

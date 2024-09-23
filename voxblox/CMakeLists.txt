@@ -14,10 +14,10 @@ find_package(OpenMP REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common io)
 find_package(Threads REQUIRED)
+
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_MACOSX_RPATH 0)
 set(CMAKE_C_FLAGS "-Werror=implicit-function-declaration")
-# recompile with -fPIC
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_definitions(-std=c++14 -Wall -Wextra)
 
@@ -68,22 +68,33 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # Add the newly generated .pb.h files to include directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
 
-target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} ${PROTOBUF_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+ament_target_dependencies(${PROJECT_NAME}
+  Boost
+  Eigen3
+  PCL
+  Protobuf
+  Threads
+)
+
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_proto)
 
 # IDEs should put the headers in a nice place
 source_group(TREE "${PROJECT_SOURCE_DIR}/include" PREFIX "Header Files" FILES ${HEADER_LIST})
 
 install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_proto
-	EXPORT voxbloxTargets
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 install(
-	DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-	DESTINATION include
+  DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+  DESTINATION include
 )
+
+ament_export_dependencies(Boost Eigen3 PCL Protobuf Threads)
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME} ${PROJECT_NAME}_proto)
 
 ament_package()

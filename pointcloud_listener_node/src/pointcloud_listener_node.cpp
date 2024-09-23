@@ -21,7 +21,7 @@ PointCloudListenerNode::PointCloudListenerNode() {
 void PointCloudListenerNode::pclCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg) {
   // Convert ROS point cloud to PCL point cloud
   pcl::PointCloud<PointType>::Ptr pcl_cloud(new pcl::PointCloud<PointType>);
-  pcl::fromROSMsg(input_cloud, *pcl_cloud);
+  pcl::fromROSMsg(*msg, *pcl_cloud);
 
   // Advance the map updater with the new point cloud
   map_updater_->run(msg);

@@ -49,6 +49,11 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION bin
 )
 
+install(
+  DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+  DESTINATION include
+)
+
 ament_export_dependencies(PCL Glog gflags Eigen3 yaml-cpp voxblox)
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})

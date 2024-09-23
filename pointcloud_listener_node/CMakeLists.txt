@@ -7,6 +7,7 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(dynablox REQUIRED)
 find_package(PCL REQUIRED)
+find_package(pcl_conversions REQUIRED)
 
 # Include directories
 include_directories(
@@ -20,6 +21,7 @@ add_executable(pointcloud_listener_node src/pointcloud_listener_node.cpp)
 # Link libraries
 ament_target_dependencies(pointcloud_listener_node
     PCL
+    pcl_conversions
     rclcpp
     sensor_msgs
     dynablox
@@ -35,7 +37,7 @@ install(DIRECTORY launch
     DESTINATION share/${PROJECT_NAME}/
 )
 
-ament_export_dependencies(PCL rclcpp sensor_msgs dynablox)
+ament_export_dependencies(PCL pcl_conversions rclcpp sensor_msgs dynablox)
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 

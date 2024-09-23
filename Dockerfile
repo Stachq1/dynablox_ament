@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     protobuf-compiler \
     libpcl-dev \
     vim \
-    && rm -rf /var/lib/apt/lists/*
+    ros-humble-pcl-conversions
 
 # Remove apt installed Eigen 3.4.0 and install 3.3.7 instead
 RUN rm -rf /usr/include/eigen3 && mv /root/dynablox/eigen3 /usr/include/

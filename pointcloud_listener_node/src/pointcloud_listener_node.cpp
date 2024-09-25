@@ -12,7 +12,7 @@ PointCloudListenerNode::PointCloudListenerNode(std::string node_name) : rclcpp::
     RCLCPP_WARN(this->get_logger(), "pcl_topic not found. Using default value.");
   }
 
-  if (!this->get_parameter("pcl_topic", dynablox_param_path_)) {
+  if (!this->get_parameter("dynablox_param_path", dynablox_param_path_)) {
     RCLCPP_WARN(this->get_logger(), "dynablox_param_path not found. Using default value.");
   }
 

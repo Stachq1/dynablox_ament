@@ -15,7 +15,11 @@ RUN apt-get update && apt-get install -y \
     protobuf-compiler \
     libpcl-dev \
     vim \
-    ros-humble-pcl-conversions
+    ros-humble-pcl-conversions \
+    ros-humble-rviz2
+
+# Allow rviz to find the Ogre libraries
+RUN export LD_LIBRARY_PATH=/opt/ros/humble/opt/rviz_ogre_vendor/lib:$LD_LIBRARY_PATH
 
 # Remove apt installed Eigen 3.4.0 and install 3.3.7 instead
 RUN rm -rf /usr/include/eigen3 && mv /root/dynablox/eigen3 /usr/include/
@@ -25,3 +29,13 @@ RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 # Set the entrypoint to bash
 ENTRYPOINT ["/bin/bash"]
+
+
+############################################
+# To run this properly with RViz use:
+# docker run -it --rm \
+# --net=host \
+# -e DISPLAY=$DISPLAY \
+# -v /tmp/.X11-unix:/tmp/.X11-unix \
+# dynablox
+############################################

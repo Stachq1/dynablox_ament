@@ -1,4 +1,4 @@
 pointcloud_listener_node:
   ros__parameters:
     pcl_topic: "/point_cloud_topic"
-    dynablox_param_path: "assets/config.yaml"
+    dynablox_param_path: "/root/install/dynablox/assets/config.yaml" # Only works in provided container!

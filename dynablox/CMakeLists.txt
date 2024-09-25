@@ -50,6 +50,11 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 install(
+  DIRECTORY ${PROJECT_SOURCE_DIR}/assets/
+  DESTINATION assets
+)
+
+install(
   DIRECTORY ${PROJECT_SOURCE_DIR}/include/
   DESTINATION include
 )

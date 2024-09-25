@@ -4,13 +4,20 @@ PointCloudListenerNode::PointCloudListenerNode(std::string node_name) : rclcpp::
   // Declare the 'pcl_topic' parameter with a default value
   this->declare_parameter<std::string>("pcl_topic", "/default_point_cloud_topic");
 
-    // Retrieve the parameter from the node's parameter server
+  // Declare the 'dynablox_param_path' parameter with a default value
+  this->declare_parameter<std::string>("dynablox_param_path", "config/config.yaml");
+
+  // Retrieve the parameters from the node's parameter server
   if (!this->get_parameter("pcl_topic", pcl_topic_)) {
-    RCLCPP_WARN(this->get_logger(), "Topic name parameter not found. Using default value.");
+    RCLCPP_WARN(this->get_logger(), "pcl_topic not found. Using default value.");
+  }
+
+  if (!this->get_parameter("pcl_topic", dynablox_param_path_)) {
+    RCLCPP_WARN(this->get_logger(), "dynablox_param_path not found. Using default value.");
   }
 
   // Create a MapUpdater instance
-  map_updater_ = std::make_shared<dynablox::MapUpdater>("config/config.yaml");
+  map_updater_ = std::make_shared<dynablox::MapUpdater>(dynablox_param_path_);
 
   pcl_sub_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
       pcl_topic_, 10, std::bind(&PointCloudListenerNode::pclCallback, this, std::placeholders::_1));

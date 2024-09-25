@@ -18,7 +18,10 @@ private:
 
   std::shared_ptr<dynablox::MapUpdater> map_updater_;
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pcl_sub_;
+
+  // Parameters
   std::string pcl_topic_;
+  std::string dynablox_param_path_;
 };
 
 #endif // POINTCLOUD_LISTENER_NODE_HPP

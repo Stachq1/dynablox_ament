@@ -1,3 +1,4 @@
 pointcloud_listener_node:
   ros__parameters:
     pcl_topic: "/point_cloud_topic"
+    dynablox_param_path: "/path/to/dynablox/param"

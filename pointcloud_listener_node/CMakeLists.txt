@@ -46,7 +46,7 @@ install(TARGETS pointcloud_listener_node
 )
 
 # Install launch files
-install(DIRECTORY launch
+install(DIRECTORY launch config
     DESTINATION share/${PROJECT_NAME}/
 )
 

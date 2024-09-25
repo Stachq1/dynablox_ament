@@ -5,7 +5,7 @@ PointCloudListenerNode::PointCloudListenerNode(std::string node_name) : rclcpp::
   this->declare_parameter<std::string>("pcl_topic", "/default_point_cloud_topic");
 
   // Declare the 'dynablox_param_path' parameter with a default value
-  this->declare_parameter<std::string>("dynablox_param_path", "config/config.yaml");
+  this->declare_parameter<std::string>("dynablox_param_path", "assets/config.yaml");
 
   // Retrieve the parameters from the node's parameter server
   if (!this->get_parameter("pcl_topic", pcl_topic_)) {

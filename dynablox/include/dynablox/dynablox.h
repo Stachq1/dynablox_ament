@@ -39,6 +39,10 @@ class MapUpdater {
   void saveMap(std::string const& folder_path);
   const common::Config getCfg() { return config_; }
 
+  // Functions for retrieving current pointclouds
+  const pcl::PointCloud<PointType>::Ptr getDynamicCloud() { return Dynamic_Cloud_; }
+  const pcl::PointCloud<PointType>::Ptr getStaticCloud() { return Static_Cloud_; }
+
  private:
   common::Config config_;
   YAML::Node yconfig;

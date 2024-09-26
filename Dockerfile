@@ -24,6 +24,12 @@ RUN export LD_LIBRARY_PATH=/opt/ros/humble/opt/rviz_ogre_vendor/lib:$LD_LIBRARY_
 # Remove apt installed Eigen 3.4.0 and install 3.3.7 instead
 RUN rm -rf /usr/include/eigen3 && mv /root/dynablox/eigen3 /usr/include/
 
+# Install the Livox SDK for data inspection
+RUN git clone https://github.com/Livox-SDK/livox_ros_driver2.git && \
+    cd livox_ros_driver2 && \
+    source /opt/ros/humble/setup.bash && \
+    ./build.sh humble
+
 # Source the ROS environment
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
@@ -33,6 +39,7 @@ ENTRYPOINT ["/bin/bash"]
 
 ############################################
 # To run this properly with RViz use:
+# xhost +local:root
 # docker run -it --rm \
 # --net=host \
 # -e DISPLAY=$DISPLAY \

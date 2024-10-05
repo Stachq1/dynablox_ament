@@ -2,10 +2,10 @@
 
 PointCloudListenerNode::PointCloudListenerNode(std::string node_name) : rclcpp::Node(node_name) {
   // Declare the 'pcl_topic' parameter with a default value
-  this->declare_parameter<std::string>("pcl_topic", "/default_point_cloud_topic"); // TODO: Change default value
+  this->declare_parameter<std::string>("pcl_topic", "/cloud_registered_body"); // TODO: Change default value
 
   // Declare the 'dynamic_cloud_topic' parameter with a default value
-  this->declare_parameter<std::string>("pcl_topic", "/default_point_cloud_topic");
+  this->declare_parameter<std::string>("dynamic_cloud_topic", "/cloud_dynamic_body");
 
   // Declare the 'dynablox_param_path' parameter with a default value
   this->declare_parameter<std::string>("dynablox_param_path", "assets/config.yaml");

@@ -47,7 +47,7 @@ void PointCloudListenerNode::pclCallback(const sensor_msgs::msg::PointCloud2::Sh
   pcl::PointCloud<PointType>::Ptr dynamic_cloud = map_updater_->getDynamicCloud();
   pcl::toROSMsg(*dynamic_cloud, ros_dynamic_cloud);
   ros_dynamic_cloud.header.stamp = this->now();
-  ros_dynamic_cloud.header.frame_id = "map"; // Possibly very wrong
+  ros_dynamic_cloud.header.frame_id = "body_lidar"; // Possibly very wrong
 
   // Publish them
   dynamic_cloud_pub_->publish(ros_dynamic_cloud);

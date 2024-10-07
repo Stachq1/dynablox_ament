@@ -135,26 +135,26 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
   /* Note from Kin */
   /* optional 1: use the cluster info to decide
      recommend for real-time detection, lower score in clean task but high in IoU */ 
-  // for (const Cluster& cluster : clusters) {
-  //   for (int index : cluster.points){
-  //     Dynamic_Cloud_->points.emplace_back(cloud[index].x, cloud[index].y, cloud[index].z);
-  //   }
-  // }
-  // size_t i = 0;
-  // for (const auto& point : cloud.points) {
-  //   if (!cloud_info.points[i++].cluster_level_dynamic)
-  //     Static_Cloud_->points.emplace_back(point.x, point.y, point.z);
-  // }
+  for (const Cluster& cluster : clusters) {
+    for (int index : cluster.points){
+      Dynamic_Cloud_->points.emplace_back(cloud[index].x, cloud[index].y, cloud[index].z);
+    }
+  }
+  size_t i = 0;
+  for (const auto& point : cloud.points) {
+    if (!cloud_info.points[i++].cluster_level_dynamic)
+      Static_Cloud_->points.emplace_back(point.x, point.y, point.z);
+  }
 
   /* optional 2: use the ever_free info
      recommend for clean task, higher clean score than previous one */ 
-  size_t i = 0;
-  for (const auto& pt : cloud.points) {
-    if (cloud_info.points[i++].ever_free_level_dynamic)
-      Dynamic_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
-    else
-      Static_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
-  }
+  // size_t i = 0;
+  // for (const auto& pt : cloud.points) {
+  //   if (cloud_info.points[i++].ever_free_level_dynamic)
+  //     Dynamic_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
+  //   else
+  //     Static_Cloud_->points.emplace_back(pt.x, pt.y, pt.z);
+  // }
 }
 
 void MapUpdater::saveMap(std::string const& folder_path) {

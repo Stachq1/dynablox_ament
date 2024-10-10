@@ -25,17 +25,17 @@ RUN export LD_LIBRARY_PATH=/opt/ros/humble/opt/rviz_ogre_vendor/lib:$LD_LIBRARY_
 RUN rm -rf /usr/include/eigen3 && mv /root/dynablox/eigen3 /usr/include/
 
 # Install the Livox SDK for data inspection
-RUN git clone https://github.com/Livox-SDK/Livox-SDK2.git && \
-    cd ./Livox-SDK2/ && \
-    mkdir build && \
-    cd build && \
-    cmake .. && make -j 2 && \
-    sudo make install
+# RUN git clone https://github.com/Livox-SDK/Livox-SDK2.git && \
+#     cd ./Livox-SDK2/ && \
+#     mkdir build && \
+#     cd build && \
+#     cmake .. && make -j 2 && \
+#     sudo make install
 
-RUN git clone https://github.com/Livox-SDK/livox_ros_driver2.git ws_livox/src/livox_ros_driver2 && \
-    /bin/bash -c "source /opt/ros/humble/setup.bash" && \
-    cd ws_livox/src/livox_ros_driver2 && \
-    ./build.sh humble
+# RUN git clone https://github.com/Livox-SDK/livox_ros_driver2.git ws_livox/src/livox_ros_driver2 && \
+#     /bin/bash -c "source /opt/ros/humble/setup.bash" && \
+#     cd ws_livox/src/livox_ros_driver2 && \
+#     ./build.sh humble
 
 # Source the ROS environment
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc

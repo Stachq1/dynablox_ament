@@ -45,12 +45,18 @@ void PointCloudListenerNode::pclCallback(const sensor_msgs::msg::PointCloud2::Sh
   // Get current dynamic points
   sensor_msgs::msg::PointCloud2 ros_dynamic_cloud;
   pcl::PointCloud<PointType>::Ptr dynamic_cloud = map_updater_->getDynamicCloud();
+
+  // Print the size of the dynamic point cloud from Dynablox
+  RCLCPP_WARN(this->get_logger(), "Dynamic point cloud has %zu points", dynamic_cloud->size());
+
   pcl::toROSMsg(*dynamic_cloud, ros_dynamic_cloud);
   ros_dynamic_cloud.header.stamp = this->now();
   ros_dynamic_cloud.header.frame_id = "body_lidar"; // Possibly very wrong
 
   // Publish them
   dynamic_cloud_pub_->publish(ros_dynamic_cloud);
+
+
 }
 
 int main(int argc, char *argv[]) {

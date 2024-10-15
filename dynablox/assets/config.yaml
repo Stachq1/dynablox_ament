@@ -8,14 +8,14 @@ verbose: false
 # Preprocessing.
 preprocessing:
   min_range: 0.5  # m
-  max_range: 10  # m
+  max_range: 20  # m
 
 # Ever-Free Integration.
 ever_free_integrator:
   counter_to_reset: 150 # Observations to un-free an ever-free voxel [frames]
   temporal_buffer: 2   # To compensate sparsity [frames].
   burn_in_period: 5   # Burn in before becoming ever-free [frames].
-  tsdf_occupancy_threshold: 0.15 # 1.5 voxel sizes.
+  tsdf_occupancy_threshold: 0.3 # 1.5 voxel sizes.
   neighbor_connectivity: 26
   
 # Clustering.
@@ -37,7 +37,7 @@ tracking:
 # Voxblox parameters.
 voxblox:
   # SDF.
-  tsdf_voxel_size: 0.05
+  tsdf_voxel_size: 0.2
   truncation_distance: 0.4
   tsdf_voxels_per_side: 16
   max_weight: 1000

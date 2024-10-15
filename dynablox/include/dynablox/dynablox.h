@@ -43,6 +43,10 @@ class MapUpdater {
   const pcl::PointCloud<PointType>::Ptr getDynamicCloud() { return Dynamic_Cloud_; }
   const pcl::PointCloud<PointType>::Ptr getStaticCloud() { return Static_Cloud_; }
 
+  // Functions for resetting current pointclouds
+  void resetDynamicCloud() { Dynamic_Cloud_->clear(); }
+  void resetStaticCloud() { Static_Cloud_->clear(); }
+
  private:
   common::Config config_;
   YAML::Node yconfig;

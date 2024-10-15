@@ -56,7 +56,8 @@ void PointCloudListenerNode::pclCallback(const sensor_msgs::msg::PointCloud2::Sh
   // Publish them
   dynamic_cloud_pub_->publish(ros_dynamic_cloud);
 
-
+  // Reset the dynamic pointcloud inside Dynablox
+  map_updater_->resetDynamicCloud();
 }
 
 int main(int argc, char *argv[]) {

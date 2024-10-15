@@ -23,8 +23,9 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr dynamic_cloud_pub_;
 
   // Parameters
-  std::string pcl_topic_;
-  std::string dynamic_cloud_topic_;
+  std::string source_pcl_topic_;
+  std::string dynamic_pcl_topic_;
+  std::string pcl_frame_;
   std::string dynablox_param_path_;
 };
 

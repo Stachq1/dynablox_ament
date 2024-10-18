@@ -40,7 +40,7 @@ class MapUpdater {
   const common::Config getCfg() { return config_; }
 
   // Functions for retrieving current pointclouds
-  const pcl::PointCloud<PointType>::Ptr getDynamicCloud() { return Dynamic_Cloud_; }
+  const pcl::PointCloud<pcl::PointXYZRGB>::Ptr getDynamicCloud() { return Dynamic_Cloud_; }
   const pcl::PointCloud<PointType>::Ptr getStaticCloud() { return Static_Cloud_; }
 
   // Functions for resetting current pointclouds
@@ -75,6 +75,7 @@ class MapUpdater {
   std::vector<voxblox::Point> previous_centroids_;
   std::vector<int> previous_ids_;
   std::vector<int> previous_track_lengths_;
-  pcl::PointCloud<PointType>::Ptr Dynamic_Cloud_, Static_Cloud_;
+  pcl::PointCloud<PointType>::Ptr Static_Cloud_;
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr Dynamic_Cloud_;
 };
 }  // namespace dynablox

@@ -23,7 +23,7 @@ MapUpdater::MapUpdater(const std::string& config_file_path) {
   MapUpdater::setConfig();
 
   // reset and initial
-  Dynamic_Cloud_.reset(new pcl::PointCloud<PointType>);
+  Dynamic_Cloud_.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
   Static_Cloud_.reset(new pcl::PointCloud<PointType>);
   tsdf_mapper_ = std::make_shared<voxblox::TsdfMapper>(config_.voxblox_integrator_);
 
@@ -34,6 +34,21 @@ MapUpdater::MapUpdater(const std::string& config_file_path) {
   // function
   clustering_ = std::make_shared<Clustering>(config_.clustering, tsdf_layer_);
   ever_free_integrator_ = std::make_shared<EverFreeIntegrator>(config_.ever_free_integrator_, tsdf_layer_);
+}
+
+std::array<uint8_t, 3> getColorFromId(int id) {
+  // Use a simple hash function to generate a seed from the ID
+  uint32_t hash = static_cast<uint32_t>(id);
+  hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+  hash = ((hash >> 16) ^ hash) * 0x45d9f3b;
+  hash = (hash >> 16) ^ hash;
+
+  // Use the hash to generate RGB values
+  uint8_t r = static_cast<uint8_t>((hash & 0xFF0000) >> 16);
+  uint8_t g = static_cast<uint8_t>((hash & 0x00FF00) >> 8);
+  uint8_t b = static_cast<uint8_t>(hash & 0x0000FF);
+
+  return {r, g, b};
 }
 
 void MapUpdater::setConfig() {
@@ -136,8 +151,9 @@ void MapUpdater::run(pcl::PointCloud<PointType>::Ptr const& single_pc) {
   /* optional 1: use the cluster info to decide
      recommend for real-time detection, lower score in clean task but high in IoU */ 
   for (const Cluster& cluster : clusters) {
+    auto colors = getColorFromId(cluster.id);
     for (int index : cluster.points){
-      Dynamic_Cloud_->points.emplace_back(cloud[index].x, cloud[index].y, cloud[index].z);
+      Dynamic_Cloud_->points.emplace_back(cloud[index].x, cloud[index].y, cloud[index].z, colors[0], colors[1], colors[2]);
     }
   }
   size_t i = 0;

@@ -51,7 +51,7 @@ void PointCloudListenerNode::pclCallback(const sensor_msgs::msg::PointCloud2::Sh
 
   // Get current dynamic points
   sensor_msgs::msg::PointCloud2 ros_dynamic_cloud;
-  pcl::PointCloud<PointType>::Ptr dynamic_cloud = map_updater_->getDynamicCloud();
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr dynamic_cloud = map_updater_->getDynamicCloud();
 
   // Print the size of the dynamic point cloud from Dynablox
   RCLCPP_WARN(this->get_logger(), "Dynamic point cloud has %zu points", dynamic_cloud->size());
